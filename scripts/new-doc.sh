@@ -14,8 +14,10 @@
 #
 set -euo pipefail
 
+# 公開ドキュメントは public/ 配下（wrangler.jsonc の assets.directory）に置く
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-INDEX="$ROOT/index.html"
+PUBLIC="$ROOT/public"
+INDEX="$PUBLIC/index.html"
 
 slug="${1:-}"
 title="${2:-}"
@@ -34,14 +36,14 @@ case "$slug" in
     exit 1;;
 esac
 
-out="$ROOT/$slug.html"
+out="$PUBLIC/$slug.html"
 if [ -e "$out" ]; then
-  echo "エラー: $slug.html は既に存在します。別の slug を指定してください。" >&2
+  echo "エラー: public/$slug.html は既に存在します。別の slug を指定してください。" >&2
   exit 1
 fi
 
 if [ ! -f "$INDEX" ]; then
-  echo "エラー: index.html が見つかりません ($INDEX)" >&2
+  echo "エラー: public/index.html が見つかりません ($INDEX)" >&2
   exit 1
 fi
 
@@ -150,7 +152,7 @@ mv "$tmp" "$INDEX"
 rm -f "$block"
 
 echo "作成しました:"
-echo "  - $slug.html        (雛形ドキュメント)"
-echo "  - index.html        (目次に #$num として追加)"
+echo "  - public/$slug.html   (雛形ドキュメント)"
+echo "  - public/index.html   (目次に #$num として追加)"
 echo
 echo "ローカル確認:  npx wrangler dev   →  http://localhost:8787/$slug.html"
