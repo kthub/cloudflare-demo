@@ -3,325 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cloudflare 静的サイト公開ガイド</title>
+<title>Temporary Static Documents</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#FBF6EE;--paper:#FFFDF9;--ink:#23201B;--ink-soft:#6B6358;
-    --line:#E7DECF;--orange:#F6821F;--orange-deep:#D9650A;--blue:#2C4A6E;
-    --shadow:rgba(60,46,20,.08);
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  html{scroll-behavior:smooth;}
-  body{
-    font-family:"Zen Kaku Gothic New",sans-serif;background:var(--bg);color:var(--ink);
-    line-height:1.75;-webkit-font-smoothing:antialiased;
-    background-image:
-      radial-gradient(circle at 12% 8%, rgba(246,130,31,.07), transparent 38%),
-      radial-gradient(circle at 88% 82%, rgba(44,74,110,.06), transparent 42%);
-    background-attachment:fixed;
-  }
-  .wrap{max-width:880px;margin:0 auto;padding:0 24px;}
-
-  header{padding:84px 0 0;}
-  .kicker{
-    font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.28em;
-    text-transform:uppercase;color:var(--orange-deep);font-weight:500;
-    display:flex;align-items:center;gap:12px;margin-bottom:22px;
-  }
-  .kicker::before{content:"";width:34px;height:2px;background:var(--orange);display:inline-block;}
-  h1{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;
-    font-size:clamp(2.4rem,6.5vw,4.1rem);line-height:1;letter-spacing:-.02em;}
-  h1 .orange{color:var(--orange);}
-  .sub{font-size:1.1rem;color:var(--ink-soft);margin-top:22px;font-weight:400;}
-
-  .prereq{background:var(--paper);border:1px solid var(--line);border-radius:16px;
-    padding:24px 26px;margin:32px 0 40px;box-shadow:0 6px 20px var(--shadow);}
-  .prereq h3{font-family:"Bricolage Grotesque",sans-serif;font-size:1.05rem;font-weight:600;
-    margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-  .prereq h3 span{width:8px;height:8px;background:var(--orange);border-radius:50%;}
-  .prereq ul{list-style:none;display:grid;gap:8px;}
-  .prereq li{padding-left:24px;position:relative;font-size:.96rem;color:var(--ink-soft);}
-  .prereq li::before{content:"✓";position:absolute;left:0;color:var(--orange);font-weight:700;}
-  .prereq li b{color:var(--ink);}
-
-  .sec-h{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.5rem;
-    letter-spacing:-.01em;margin:18px 0 8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-  .sec-h .bar{width:10px;height:10px;background:var(--orange);border-radius:50%;flex-shrink:0;}
-  .sec-h .once{font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.12em;
-    text-transform:uppercase;color:#fff;background:var(--orange-deep);padding:4px 9px;
-    border-radius:6px;font-weight:700;}
-  .sec-lead{color:var(--ink-soft);font-size:.97rem;margin-bottom:8px;}
-
-  .anatomy{background:var(--paper);border:1px solid var(--line);border-radius:18px;
-    padding:30px 26px;margin:22px 0 26px;box-shadow:0 6px 20px var(--shadow);}
-  .url-line{font-family:"JetBrains Mono",monospace;font-size:clamp(.85rem,2.6vw,1.3rem);
-    font-weight:700;display:flex;flex-wrap:wrap;align-items:flex-end;gap:2px;justify-content:center;
-    line-height:1.4;}
-  .seg{display:inline-flex;flex-direction:column;align-items:center;gap:8px;padding-top:4px;}
-  .seg .txt{padding:4px 8px;border-radius:7px;}
-  .seg.s1 .txt{background:rgba(246,130,31,.16);color:var(--orange-deep);}
-  .seg.s2 .txt{background:rgba(44,74,110,.14);color:var(--blue);}
-  .seg.s3 .txt{color:var(--ink-soft);}
-  .seg .tag{font-family:"Zen Kaku Gothic New",sans-serif;font-size:.64rem;font-weight:700;
-    letter-spacing:.04em;white-space:nowrap;}
-  .seg.s1 .tag{color:var(--orange-deep);}
-  .seg.s2 .tag{color:var(--blue);}
-  .seg.s3 .tag{color:var(--ink-soft);}
-  .dot{color:var(--ink-soft);font-weight:700;align-self:flex-end;padding-bottom:6px;}
-
-  ol.steps{list-style:none;counter-reset:step;margin-top:24px;}
-  ol.steps>li{counter-increment:step;position:relative;padding:0 0 32px 64px;}
-  ol.steps>li::before{content:counter(step);position:absolute;left:0;top:-2px;
-    width:42px;height:42px;border-radius:50%;background:var(--paper);
-    border:2px solid var(--orange);color:var(--orange-deep);
-    font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.15rem;
-    display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px var(--shadow);}
-  ol.steps>li::after{content:"";position:absolute;left:20px;top:44px;bottom:4px;width:2px;
-    background:linear-gradient(var(--line),transparent);}
-  ol.steps>li:last-child::after{display:none;}
-  .step-title{font-weight:700;font-size:1.06rem;margin-bottom:4px;}
-  .step-body{color:var(--ink-soft);font-size:.97rem;}
-  .step-body b{color:var(--ink);font-weight:700;}
-
-  .ui{font-family:"JetBrains Mono",monospace;font-size:.8rem;background:#F0E8D8;
-    border:1px solid var(--line);border-radius:6px;padding:2px 8px;color:var(--blue);
-    white-space:nowrap;font-weight:500;}
-  .arrow{color:var(--orange);font-weight:700;margin:0 2px;}
-
-  pre{background:#221F1A;border-radius:14px;padding:20px 22px;margin-top:14px;
-    overflow-x:auto;box-shadow:0 10px 30px rgba(40,30,10,.18);position:relative;}
-  pre code{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:#F3ECDD;
-    line-height:1.85;display:block;}
-  pre .cmt{color:#7E9B6C;}
-  pre .cmd{color:#F6A04C;}
-  pre .key{color:#9CC4E4;}
-  pre .str{color:#E4C07A;}
-  .terminal-dot{position:absolute;top:14px;right:16px;display:flex;gap:6px;}
-  .terminal-dot i{width:9px;height:9px;border-radius:50%;display:block;opacity:.55;}
-  .terminal-dot i:nth-child(1){background:#FF5F56;}
-  .terminal-dot i:nth-child(2){background:#FFBD2E;}
-  .terminal-dot i:nth-child(3){background:#27C93F;}
-
-  .note{display:flex;gap:14px;background:var(--paper);border:1px solid var(--line);
-    border-left:4px solid var(--orange);border-radius:12px;padding:16px 18px;margin-top:14px;
-    font-size:.92rem;color:var(--ink-soft);}
-  .note b{color:var(--ink);font-weight:700;}
-  .note .ic{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;color:var(--orange-deep);
-    font-size:1.1rem;flex-shrink:0;}
-
-  .result{margin-top:6px;background:linear-gradient(135deg,#FFF4E6,#FFFDF9);
-    border:1px dashed var(--orange);border-radius:14px;padding:18px 22px;}
-  .result .lbl{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.16em;
-    text-transform:uppercase;color:var(--orange-deep);}
-  .result .url{font-family:"JetBrains Mono",monospace;font-size:1rem;color:var(--ink);
-    font-weight:700;margin-top:6px;word-break:break-all;}
-
-  .divider{height:1px;background:var(--line);margin:50px 0 0;}
-
-  .tabs{display:flex;gap:6px;margin:4px 0 30px;flex-wrap:wrap;position:sticky;top:0;
-    background:var(--bg);padding:14px 0;z-index:20;border-bottom:1px solid var(--line);}
-  .tab{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;font-size:.92rem;
-    border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);
-    padding:11px 18px;border-radius:12px;cursor:pointer;transition:.18s;
-    display:flex;align-items:center;gap:9px;}
-  .tab .n{font-family:"JetBrains Mono",monospace;font-size:.72rem;opacity:.6;}
-  .tab:hover{border-color:var(--orange);color:var(--ink);}
-  .tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
-  .tab.active .n{opacity:.7;}
-  .panel{display:none;animation:fade .4s ease;}
-  .panel.active{display:block;}
-  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
-  .panel-head h2{font-family:"Bricolage Grotesque",sans-serif;font-weight:600;
-    font-size:1.5rem;letter-spacing:-.01em;}
-  .panel-head p{color:var(--ink-soft);font-size:.96rem;margin-top:6px;}
-
-  footer{margin-top:54px;padding:34px 0 70px;border-top:1px solid var(--line);
-    color:var(--ink-soft);font-size:.85rem;}
-  footer a{color:var(--orange-deep);text-decoration:none;border-bottom:1px solid var(--line);}
-  footer a:hover{border-color:var(--orange);}
-  .conf{font-family:"JetBrains Mono",monospace;font-size:.74rem;margin-top:10px;opacity:.85;line-height:1.7;}
-</style>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div class="wrap">
 
   <header>
-    <div class="kicker">Cloudflare Workers · Static Site</div>
-    <h1>静的サイトの<br><span class="orange">公開ガイド</span></h1>
-    <p class="sub">Cloudflare で静的HTMLを無料で公開する手順です。</p>
+    <div class="kicker">Index · Cloudflare Workers</div>
+    <h1>Temporary<br><span class="orange">Static Documents</span></h1>
+    <p class="sub">このサイトで公開している一時的な静的ドキュメントの目次です。</p>
   </header>
 
-  <div class="prereq">
-    <h3><span></span>用意するもの</h3>
-    <ul>
-      <li><b>Cloudflareアカウント</b>（無料）</li>
-      <li><b>公開するHTMLフォルダ</b></li>
-    </ul>
-  </div>
-
-  <!-- ========== STEP 1 ========== -->
-  <div class="sec-h"><span class="bar"></span>STEP 1 — 公開URLの調整 <span class="once">初回だけ</span></div>
-  <p class="sec-lead">Cloudflare で公開したサイトは、初期状態では <b>workers.dev</b> ドメインで配信されます。このときのURLは次の3つの部分でできており、真ん中の<b>サブドメイン</b>はアカウント共通の値として、好きな名前に設定できます。公開を始める前に一度だけ決めておきます（以降は変更不要）。</p>
-
-  <div class="anatomy">
-    <div class="url-line">
-      <span class="seg s1"><span class="txt">my-site</span><span class="tag">Worker名</span></span>
-      <span class="dot">.</span>
-      <span class="seg s2"><span class="txt">sub-domain</span><span class="tag">サブドメイン</span></span>
-      <span class="dot">.</span>
-      <span class="seg s3"><span class="txt">workers.dev</span><span class="tag">固定</span></span>
-    </div>
-  </div>
-
-  <p class="sec-lead">サブドメインを好みの名前に変更する手順:</p>
-  <ol class="steps">
+  <!-- 新しいドキュメントを追加するときは、この <ul class="docs"> に <li><a> を1つ足すだけ -->
+  <div class="count">Documents</div>
+  <ul class="docs">
     <li>
-      <div class="step-title">Workers &amp; Pages を開く</div>
-      <div class="step-body">ダッシュボードの <span class="ui">Workers &amp; Pages</span> ページへ。</div>
+      <a class="doc" href="cloudflare-guide.html">
+        <span class="idx">01</span>
+        <span class="meta">
+          <span class="title">Cloudflare 静的サイト公開ガイド</span>
+          <span class="desc">静的HTMLを Cloudflare Workers で無料公開する手順</span>
+        </span>
+        <span class="go">→</span>
+      </a>
     </li>
-    <li>
-      <div class="step-title">「Your subdomain」の Change を押す</div>
-      <div class="step-body">ページ内の <span class="ui">Your subdomain</span> の横にある <span class="ui">Change</span> を選択。</div>
-    </li>
-    <li>
-      <div class="step-title">新しい名前を入力して保存</div>
-      <div class="step-body">使いたいサブドメイン名を入力して確定。以降このアカウントのWorkerはすべて <code>&lt;Worker名&gt;.&lt;新サブドメイン&gt;.workers.dev</code> になる。</div>
-    </li>
-  </ol>
-  <div class="note">
-    <span class="ic">!</span>
-    <div>サブドメインは<b>アカウント単位</b>の設定です。変更すると同じアカウントの全WorkerのURLに反映されます。<span class="ui">Change</span> が見当たらない・変更できない場合は、Cloudflareサポートへの問い合わせが必要です。</div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- ========== STEP 2 ========== -->
-  <div class="sec-h" style="margin-top:40px;"><span class="bar"></span>STEP 2 — サイトを公開する</div>
-  <p class="sec-lead">3つの方法があります。お試しなら①、設定ファイルで管理するなら②、Gitと連携して自動更新するなら③。</p>
-
-  <div class="tabs">
-    <button class="tab active" data-tab="upload"><span class="n">01</span>ドラッグ&ドロップ</button>
-    <button class="tab" data-tab="wrangler"><span class="n">02</span>Wrangler</button>
-    <button class="tab" data-tab="git"><span class="n">03</span>Git連携</button>
-  </div>
-
-  <!-- PANEL 1 -->
-  <section class="panel active" id="upload">
-    <div class="panel-head">
-      <h2>ドラッグ&ドロップ</h2>
-      <p>ダッシュボードにファイルをアップロードするだけの、最も手軽な方法。</p>
-    </div>
-    <ol class="steps">
-      <li>
-        <div class="step-title">Workers &amp; Pages を開く</div>
-        <div class="step-body">ダッシュボードの <span class="ui">Workers &amp; Pages</span> へ。</div>
-      </li>
-      <li>
-        <div class="step-title">アップロード方式を選ぶ</div>
-        <div class="step-body"><span class="ui">Create application</span> <span class="arrow">→</span> <span class="ui">Upload and deploy</span> を選ぶ。</div>
-      </li>
-      <li>
-        <div class="step-title">ファイルを入れて Worker 名を決める</div>
-        <div class="step-body">フォルダか zip をドラッグ&ドロップし、<b>Worker name</b> を入力。この名前がURLの先頭になる。</div>
-      </li>
-      <li>
-        <div class="step-title">デプロイ</div>
-        <div class="step-body"><span class="ui">Deploy</span> を押して完了。</div>
-      </li>
-    </ol>
-    <div class="result">
-      <div class="lbl">公開URL</div>
-      <div class="url">https://&lt;Worker名&gt;.&lt;サブドメイン&gt;.workers.dev</div>
-    </div>
-    <div class="note">
-      <span class="ic">!</span>
-      <div>ファイル名が <code>index.html</code> でない場合、ルート（<code>.../</code>）では開けず <code>.../&lt;ファイル名&gt;</code> でのアクセスになります。ルートで開きたければ <code>index.html</code> にリネームを。</div>
-    </div>
-  </section>
-
-  <!-- PANEL 2 -->
-  <section class="panel" id="wrangler">
-    <div class="panel-head">
-      <h2>Wrangler（CLI）</h2>
-      <p>設定ファイルで管理する方法。CI組み込みやチーム運用に向く。</p>
-    </div>
-    <ol class="steps">
-      <li>
-        <div class="step-title">インストールしてログイン</div>
-        <pre><span class="terminal-dot"><i></i><i></i><i></i></span><code><span class="cmt"># Node.js / npm が前提</span>
-<span class="cmd">npm install -g wrangler</span>
-<span class="cmd">wrangler login</span></code></pre>
-      </li>
-      <li>
-        <div class="step-title">設定ファイルを作る</div>
-        <div class="step-body">プロジェクトルートに <span class="ui">wrangler.jsonc</span> を作成。静的アセットのみなら最小構成はこれだけ。</div>
-        <pre><span class="terminal-dot"><i></i><i></i><i></i></span><code>{
-  <span class="key">"name"</span>: <span class="str">"my-site"</span>,           <span class="cmt">// ← URL先頭になる</span>
-  <span class="key">"compatibility_date"</span>: <span class="str">"2026-06-01"</span>,
-  <span class="key">"assets"</span>: {
-    <span class="key">"directory"</span>: <span class="str">"./public/"</span>   <span class="cmt">// 公開フォルダ</span>
-  }
-}</code></pre>
-      </li>
-      <li>
-        <div class="step-title">デプロイ</div>
-        <pre><span class="terminal-dot"><i></i><i></i><i></i></span><code><span class="cmd">wrangler deploy</span></code></pre>
-      </li>
-    </ol>
-    <div class="result">
-      <div class="lbl">公開URL</div>
-      <div class="url">https://my-site.&lt;サブドメイン&gt;.workers.dev</div>
-    </div>
-  </section>
-
-  <!-- PANEL 3 -->
-  <section class="panel" id="git">
-    <div class="panel-head">
-      <h2>Git連携（Workers Builds）</h2>
-      <p>リポジトリと連携し、<code>git push</code> で自動ビルド&デプロイする方法。</p>
-    </div>
-    <ol class="steps">
-      <li>
-        <div class="step-title">リポジトリを接続</div>
-        <div class="step-body"><span class="ui">Workers &amp; Pages</span> <span class="arrow">→</span> <span class="ui">Create application</span> から GitHub / GitLab のリポジトリをインポート。</div>
-      </li>
-      <li>
-        <div class="step-title">ビルド設定</div>
-        <div class="step-body">静的HTMLなら Build command は空欄。公開フォルダ（<code>assets.directory</code> 相当）を指定。</div>
-      </li>
-      <li>
-        <div class="step-title">デプロイ</div>
-        <div class="step-body">以降は push で自動更新。プレビューURLも付く。</div>
-      </li>
-    </ol>
-    <div class="result">
-      <div class="lbl">公開URL</div>
-      <div class="url">https://&lt;Worker名&gt;.&lt;サブドメイン&gt;.workers.dev</div>
-    </div>
-  </section>
+  </ul>
 
   <footer>
-    出典: Cloudflare 公式ドキュメント（Workers Static Assets / workers.dev configuration、2026年確認）。
-    UI文言は更新されることがあるため、実行前に
-    <a href="https://developers.cloudflare.com/workers/static-assets/" target="_blank" rel="noopener">公式ドキュメント</a> での確認を推奨します。
+    <div class="conf">Hosted on Cloudflare Workers · Static Assets</div>
   </footer>
 
 </div>
-
-<script>
-  const tabs = document.querySelectorAll('.tab');
-  const panels = document.querySelectorAll('.panel');
-  tabs.forEach(tab=>{
-    tab.addEventListener('click',()=>{
-      tabs.forEach(t=>t.classList.remove('active'));
-      panels.forEach(p=>p.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById(tab.dataset.tab).classList.add('active');
-    });
-  });
-</script>
 </body>
 </html>

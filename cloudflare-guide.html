@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloudflare 静的サイト公開ガイド</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Cloudflare Workers · Static Site</div>
+    <h1>静的サイトの<br><span class="orange">公開ガイド</span></h1>
+    <p class="sub">Cloudflare で静的HTMLを無料で公開する手順です。</p>
+  </header>
+
+  <div class="prereq">
+    <h3><span></span>用意するもの</h3>
+    <ul>
+      <li><b>Cloudflareアカウント</b>（無料）</li>
+      <li><b>公開するHTMLフォルダ</b></li>
+    </ul>
+  </div>
+
+  <!-- ========== STEP 1 ========== -->
+  <div class="sec-h"><span class="bar"></span>STEP 1 — 公開URLの調整 <span class="once">初回だけ</span></div>
+  <p class="sec-lead">Cloudflare で公開したサイトは、初期状態では <b>workers.dev</b> ドメインで配信されます。このときのURLは次の3つの部分でできており、真ん中の<b>サブドメイン</b>はアカウント共通の値として、好きな名前に設定できます。公開を始める前に一度だけ決めておきます（以降は変更不要）。</p>
+
+  <div class="anatomy">
+    <div class="url-line">
+      <span class="seg s1"><span class="txt">my-site</span><span class="tag">Worker名</span></span>
+      <span class="dot">.</span>
+      <span class="seg s2"><span class="txt">sub-domain</span><span class="tag">サブドメイン</span></span>
+      <span class="dot">.</span>
+      <span class="seg s3"><span class="txt">workers.dev</span><span class="tag">固定</span></span>
+    </div>
+  </div>
+
+  <p class="sec-lead">サブドメインを好みの名前に変更する手順:</p>
+  <ol class="steps">
+    <li>
+      <div class="step-title">Workers &amp; Pages を開く</div>
+      <div class="step-body">ダッシュボードの <span class="ui">Workers &amp; Pages</span> ページへ。</div>
+    </li>
+    <li>
+      <div class="step-title">「Your subdomain」の Change を押す</div>
+      <div class="step-body">ページ内の <span class="ui">Your subdomain</span> の横にある <span class="ui">Change</span> を選択。</div>
+    </li>
+    <li>
+      <div class="step-title">新しい名前を入力して保存</div>
+      <div class="step-body">使いたいサブドメイン名を入力して確定。以降このアカウントのWorkerはすべて <code>&lt;Worker名&gt;.&lt;新サブドメイン&gt;.workers.dev</code> になる。</div>
+    </li>
+  </ol>
+  <div class="note">
+    <span class="ic">!</span>
+    <div>サブドメインは<b>アカウント単位</b>の設定です。変更すると同じアカウントの全WorkerのURLに反映されます。<span class="ui">Change</span> が見当たらない・変更できない場合は、Cloudflareサポートへの問い合わせが必要です。</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ========== STEP 2 ========== -->
+  <div class="sec-h" style="margin-top:40px;"><span class="bar"></span>STEP 2 — サイトを公開する</div>
+  <p class="sec-lead">3つの方法があります。お試しなら①、設定ファイルで管理するなら②、Gitと連携して自動更新するなら③。</p>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="upload"><span class="n">01</span>ドラッグ&ドロップ</button>
+    <button class="tab" data-tab="wrangler"><span class="n">02</span>Wrangler</button>
+    <button class="tab" data-tab="git"><span class="n">03</span>Git連携</button>
+  </div>
+
+  <!-- PANEL 1 -->
+  <section class="panel active" id="upload">
+    <div class="panel-head">
+      <h2>ドラッグ&ドロップ</h2>
+      <p>ダッシュボードにファイルをアップロードするだけの、最も手軽な方法。</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <div class="step-title">Workers &amp; Pages を開く</div>
+        <div class="step-body">ダッシュボードの <span class="ui">Workers &amp; Pages</span> へ。</div>
+      </li>
+      <li>
+        <div class="step-title">アップロード方式を選ぶ</div>
+        <div class="step-body"><span class="ui">Create application</span> <span class="arrow">→</span> <span class="ui">Upload and deploy</span> を選ぶ。</div>
+      </li>
+      <li>
+        <div class="step-title">ファイルを入れて Worker 名を決める</div>
+        <div class="step-body">フォルダか zip をドラッグ&ドロップし、<b>Worker name</b> を入力。この名前がURLの先頭になる。</div>
+      </li>
+      <li>
+        <div class="step-title">デプロイ</div>
+        <div class="step-body"><span class="ui">Deploy</span> を押して完了。</div>
+      </li>
+    </ol>
+    <div class="result">
+      <div class="lbl">公開URL</div>
+      <div class="url">https://&lt;Worker名&gt;.&lt;サブドメイン&gt;.workers.dev</div>
+    </div>
+    <div class="note">
+      <span class="ic">!</span>
+      <div>ファイル名が <code>index.html</code> でない場合、ルート（<code>.../</code>）では開けず <code>.../&lt;ファイル名&gt;</code> でのアクセスになります。ルートで開きたければ <code>index.html</code> にリネームを。</div>
+    </div>
+  </section>
+
+  <!-- PANEL 2 -->
+  <section class="panel" id="wrangler">
+    <div class="panel-head">
+      <h2>Wrangler（CLI）</h2>
+      <p>設定ファイルで管理する方法。CI組み込みやチーム運用に向く。</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <div class="step-title">インストールしてログイン</div>
+        <pre><span class="terminal-dot"><i></i><i></i><i></i></span><code><span class="cmt"># Node.js / npm が前提</span>
+<span class="cmd">npm install -g wrangler</span>
+<span class="cmd">wrangler login</span></code></pre>
+      </li>
+      <li>
+        <div class="step-title">設定ファイルを作る</div>
+        <div class="step-body">プロジェクトルートに <span class="ui">wrangler.jsonc</span> を作成。静的アセットのみなら最小構成はこれだけ。</div>
+        <pre><span class="terminal-dot"><i></i><i></i><i></i></span><code>{
+  <span class="key">"name"</span>: <span class="str">"my-site"</span>,           <span class="cmt">// ← URL先頭になる</span>
+  <span class="key">"compatibility_date"</span>: <span class="str">"2026-06-01"</span>,
+  <span class="key">"assets"</span>: {
+    <span class="key">"directory"</span>: <span class="str">"./public/"</span>   <span class="cmt">// 公開フォルダ</span>
+  }
+}</code></pre>
+      </li>
+      <li>
+        <div class="step-title">デプロイ</div>
+        <pre><span class="terminal-dot"><i></i><i></i><i></i></span><code><span class="cmd">wrangler deploy</span></code></pre>
+      </li>
+    </ol>
+    <div class="result">
+      <div class="lbl">公開URL</div>
+      <div class="url">https://my-site.&lt;サブドメイン&gt;.workers.dev</div>
+    </div>
+  </section>
+
+  <!-- PANEL 3 -->
+  <section class="panel" id="git">
+    <div class="panel-head">
+      <h2>Git連携（Workers Builds）</h2>
+      <p>リポジトリと連携し、<code>git push</code> で自動ビルド&デプロイする方法。</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <div class="step-title">リポジトリを接続</div>
+        <div class="step-body"><span class="ui">Workers &amp; Pages</span> <span class="arrow">→</span> <span class="ui">Create application</span> から GitHub / GitLab のリポジトリをインポート。</div>
+      </li>
+      <li>
+        <div class="step-title">ビルド設定</div>
+        <div class="step-body">静的HTMLなら Build command は空欄。公開フォルダ（<code>assets.directory</code> 相当）を指定。</div>
+      </li>
+      <li>
+        <div class="step-title">デプロイ</div>
+        <div class="step-body">以降は push で自動更新。プレビューURLも付く。</div>
+      </li>
+    </ol>
+    <div class="result">
+      <div class="lbl">公開URL</div>
+      <div class="url">https://&lt;Worker名&gt;.&lt;サブドメイン&gt;.workers.dev</div>
+    </div>
+  </section>
+
+  <footer>
+    出典: Cloudflare 公式ドキュメント（Workers Static Assets / workers.dev configuration、2026年確認）。
+    UI文言は更新されることがあるため、実行前に
+    <a href="https://developers.cloudflare.com/workers/static-assets/" target="_blank" rel="noopener">公式ドキュメント</a> での確認を推奨します。
+  </footer>
+
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.panel');
+  tabs.forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      tabs.forEach(t=>t.classList.remove('active'));
+      panels.forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

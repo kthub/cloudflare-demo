@@ -1,0 +1,172 @@
+/* ============================================================
+   Temporary Static Documents — 共通スタイル
+   このサイトの全ドキュメントが同じテイストを共有します。
+   ============================================================ */
+
+:root{
+  --bg:#FBF6EE;--paper:#FFFDF9;--ink:#23201B;--ink-soft:#6B6358;
+  --line:#E7DECF;--orange:#F6821F;--orange-deep:#D9650A;--blue:#2C4A6E;
+  --shadow:rgba(60,46,20,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:"Zen Kaku Gothic New",sans-serif;background:var(--bg);color:var(--ink);
+  line-height:1.75;-webkit-font-smoothing:antialiased;min-height:100vh;
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(246,130,31,.07), transparent 38%),
+    radial-gradient(circle at 88% 82%, rgba(44,74,110,.06), transparent 42%);
+  background-attachment:fixed;
+}
+.wrap{max-width:880px;margin:0 auto;padding:0 24px;}
+
+/* ---------- 共通ヘッダー ---------- */
+header{padding:84px 0 0;}
+.kicker{
+  font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--orange-deep);font-weight:500;
+  display:flex;align-items:center;gap:12px;margin-bottom:22px;
+}
+.kicker::before{content:"";width:34px;height:2px;background:var(--orange);display:inline-block;}
+h1{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;
+  font-size:clamp(2.4rem,6.5vw,4.1rem);line-height:1;letter-spacing:-.02em;}
+h1 .orange{color:var(--orange);}
+.sub{font-size:1.1rem;color:var(--ink-soft);margin-top:22px;font-weight:400;}
+
+/* ---------- 用意するもの ---------- */
+.prereq{background:var(--paper);border:1px solid var(--line);border-radius:16px;
+  padding:24px 26px;margin:32px 0 40px;box-shadow:0 6px 20px var(--shadow);}
+.prereq h3{font-family:"Bricolage Grotesque",sans-serif;font-size:1.05rem;font-weight:600;
+  margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.prereq h3 span{width:8px;height:8px;background:var(--orange);border-radius:50%;}
+.prereq ul{list-style:none;display:grid;gap:8px;}
+.prereq li{padding-left:24px;position:relative;font-size:.96rem;color:var(--ink-soft);}
+.prereq li::before{content:"✓";position:absolute;left:0;color:var(--orange);font-weight:700;}
+.prereq li b{color:var(--ink);}
+
+/* ---------- セクション見出し ---------- */
+.sec-h{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.5rem;
+  letter-spacing:-.01em;margin:18px 0 8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.sec-h .bar{width:10px;height:10px;background:var(--orange);border-radius:50%;flex-shrink:0;}
+.sec-h .once{font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.12em;
+  text-transform:uppercase;color:#fff;background:var(--orange-deep);padding:4px 9px;
+  border-radius:6px;font-weight:700;}
+.sec-lead{color:var(--ink-soft);font-size:.97rem;margin-bottom:8px;}
+
+/* ---------- URL構造の図解 ---------- */
+.anatomy{background:var(--paper);border:1px solid var(--line);border-radius:18px;
+  padding:30px 26px;margin:22px 0 26px;box-shadow:0 6px 20px var(--shadow);}
+.url-line{font-family:"JetBrains Mono",monospace;font-size:clamp(.85rem,2.6vw,1.3rem);
+  font-weight:700;display:flex;flex-wrap:wrap;align-items:flex-end;gap:2px;justify-content:center;
+  line-height:1.4;}
+.seg{display:inline-flex;flex-direction:column;align-items:center;gap:8px;padding-top:4px;}
+.seg .txt{padding:4px 8px;border-radius:7px;}
+.seg.s1 .txt{background:rgba(246,130,31,.16);color:var(--orange-deep);}
+.seg.s2 .txt{background:rgba(44,74,110,.14);color:var(--blue);}
+.seg.s3 .txt{color:var(--ink-soft);}
+.seg .tag{font-family:"Zen Kaku Gothic New",sans-serif;font-size:.64rem;font-weight:700;
+  letter-spacing:.04em;white-space:nowrap;}
+.seg.s1 .tag{color:var(--orange-deep);}
+.seg.s2 .tag{color:var(--blue);}
+.seg.s3 .tag{color:var(--ink-soft);}
+.dot{color:var(--ink-soft);font-weight:700;align-self:flex-end;padding-bottom:6px;}
+
+/* ---------- ステップリスト ---------- */
+ol.steps{list-style:none;counter-reset:step;margin-top:24px;}
+ol.steps>li{counter-increment:step;position:relative;padding:0 0 32px 64px;}
+ol.steps>li::before{content:counter(step);position:absolute;left:0;top:-2px;
+  width:42px;height:42px;border-radius:50%;background:var(--paper);
+  border:2px solid var(--orange);color:var(--orange-deep);
+  font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.15rem;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px var(--shadow);}
+ol.steps>li::after{content:"";position:absolute;left:20px;top:44px;bottom:4px;width:2px;
+  background:linear-gradient(var(--line),transparent);}
+ol.steps>li:last-child::after{display:none;}
+.step-title{font-weight:700;font-size:1.06rem;margin-bottom:4px;}
+.step-body{color:var(--ink-soft);font-size:.97rem;}
+.step-body b{color:var(--ink);font-weight:700;}
+
+/* ---------- インラインUI要素 ---------- */
+.ui{font-family:"JetBrains Mono",monospace;font-size:.8rem;background:#F0E8D8;
+  border:1px solid var(--line);border-radius:6px;padding:2px 8px;color:var(--blue);
+  white-space:nowrap;font-weight:500;}
+.arrow{color:var(--orange);font-weight:700;margin:0 2px;}
+
+/* ---------- コードブロック ---------- */
+pre{background:#221F1A;border-radius:14px;padding:20px 22px;margin-top:14px;
+  overflow-x:auto;box-shadow:0 10px 30px rgba(40,30,10,.18);position:relative;}
+pre code{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:#F3ECDD;
+  line-height:1.85;display:block;}
+pre .cmt{color:#7E9B6C;}
+pre .cmd{color:#F6A04C;}
+pre .key{color:#9CC4E4;}
+pre .str{color:#E4C07A;}
+.terminal-dot{position:absolute;top:14px;right:16px;display:flex;gap:6px;}
+.terminal-dot i{width:9px;height:9px;border-radius:50%;display:block;opacity:.55;}
+.terminal-dot i:nth-child(1){background:#FF5F56;}
+.terminal-dot i:nth-child(2){background:#FFBD2E;}
+.terminal-dot i:nth-child(3){background:#27C93F;}
+
+/* ---------- 補足ノート ---------- */
+.note{display:flex;gap:14px;background:var(--paper);border:1px solid var(--line);
+  border-left:4px solid var(--orange);border-radius:12px;padding:16px 18px;margin-top:14px;
+  font-size:.92rem;color:var(--ink-soft);}
+.note b{color:var(--ink);font-weight:700;}
+.note .ic{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;color:var(--orange-deep);
+  font-size:1.1rem;flex-shrink:0;}
+
+/* ---------- 結果（公開URL） ---------- */
+.result{margin-top:6px;background:linear-gradient(135deg,#FFF4E6,#FFFDF9);
+  border:1px dashed var(--orange);border-radius:14px;padding:18px 22px;}
+.result .lbl{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--orange-deep);}
+.result .url{font-family:"JetBrains Mono",monospace;font-size:1rem;color:var(--ink);
+  font-weight:700;margin-top:6px;word-break:break-all;}
+
+.divider{height:1px;background:var(--line);margin:50px 0 0;}
+
+/* ---------- タブ ---------- */
+.tabs{display:flex;gap:6px;margin:4px 0 30px;flex-wrap:wrap;position:sticky;top:0;
+  background:var(--bg);padding:14px 0;z-index:20;border-bottom:1px solid var(--line);}
+.tab{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;font-size:.92rem;
+  border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);
+  padding:11px 18px;border-radius:12px;cursor:pointer;transition:.18s;
+  display:flex;align-items:center;gap:9px;}
+.tab .n{font-family:"JetBrains Mono",monospace;font-size:.72rem;opacity:.6;}
+.tab:hover{border-color:var(--orange);color:var(--ink);}
+.tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+.tab.active .n{opacity:.7;}
+.panel{display:none;animation:fade .4s ease;}
+.panel.active{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.panel-head h2{font-family:"Bricolage Grotesque",sans-serif;font-weight:600;
+  font-size:1.5rem;letter-spacing:-.01em;}
+.panel-head p{color:var(--ink-soft);font-size:.96rem;margin-top:6px;}
+
+/* ---------- 目次（index）の文書カード ---------- */
+.count{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-soft);margin:46px 0 14px;
+  display:flex;align-items:center;gap:12px;}
+.count::after{content:"";flex:1;height:1px;background:var(--line);}
+.docs{list-style:none;display:grid;gap:14px;}
+.doc{display:flex;align-items:center;gap:18px;text-decoration:none;color:inherit;
+  background:var(--paper);border:1px solid var(--line);border-radius:16px;
+  padding:22px 24px;box-shadow:0 6px 20px var(--shadow);
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;}
+.doc:hover{transform:translateY(-2px);border-color:var(--orange);box-shadow:0 12px 28px var(--shadow);}
+.doc .idx{font-family:"JetBrains Mono",monospace;font-size:.8rem;font-weight:700;
+  color:var(--orange-deep);flex-shrink:0;width:30px;}
+.doc .meta{flex:1;min-width:0;}
+.doc .title{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;
+  font-size:1.12rem;letter-spacing:-.01em;}
+.doc .desc{color:var(--ink-soft);font-size:.92rem;margin-top:3px;}
+.doc .go{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.3rem;
+  color:var(--orange);flex-shrink:0;transition:transform .16s ease;}
+.doc:hover .go{transform:translateX(4px);}
+
+/* ---------- フッター ---------- */
+footer{margin-top:54px;padding:34px 0 70px;border-top:1px solid var(--line);
+  color:var(--ink-soft);font-size:.85rem;}
+footer a{color:var(--orange-deep);text-decoration:none;border-bottom:1px solid var(--line);}
+footer a:hover{border-color:var(--orange);}
+.conf{font-family:"JetBrains Mono",monospace;font-size:.74rem;margin-top:10px;opacity:.85;line-height:1.7;}
