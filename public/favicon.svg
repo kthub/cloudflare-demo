@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <!-- メモ（バッジ型・サイト配色）favicon。色変更: BADGE=#F6821F / LINE=#FFFFFF -->
+  <rect x="4" y="4" width="40" height="40" rx="9" fill="#F6821F"/>
+  <rect x="14" y="16" width="20" height="3.4" rx="1.7" fill="#FFFFFF"/>
+  <rect x="14" y="22.4" width="20" height="3.4" rx="1.7" fill="#FFFFFF"/>
+  <rect x="14" y="28.8" width="13" height="3.4" rx="1.7" fill="#FFFFFF"/>
+</svg>
