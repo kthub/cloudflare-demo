@@ -164,6 +164,26 @@ pre .str{color:#E4C07A;}
   color:var(--orange);flex-shrink:0;transition:transform .16s ease;}
 .doc:hover .go{transform:translateX(4px);}
 
+/* ---------- ソート可能な表 ---------- */
+.table-wrap{background:var(--paper);border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 6px 20px var(--shadow);overflow:hidden;margin:8px 0 26px;}
+table.sortable{width:100%;border-collapse:collapse;font-size:.97rem;}
+table.sortable th,table.sortable td{text-align:left;padding:14px 22px;}
+table.sortable thead th{background:#F4ECDD;color:var(--ink);font-weight:700;
+  font-family:"Bricolage Grotesque",sans-serif;letter-spacing:-.01em;
+  cursor:pointer;user-select:none;white-space:nowrap;
+  border-bottom:2px solid var(--line);transition:color .15s;}
+table.sortable thead th:hover{color:var(--orange-deep);}
+table.sortable thead th::after{content:"⇅";font-size:.78rem;margin-left:8px;
+  color:var(--ink-soft);opacity:.45;}
+table.sortable thead th[aria-sort="ascending"]::after{content:"↑";color:var(--orange);opacity:1;}
+table.sortable thead th[aria-sort="descending"]::after{content:"↓";color:var(--orange);opacity:1;}
+table.sortable tbody tr{border-top:1px solid var(--line);}
+table.sortable tbody tr:first-child{border-top:none;}
+table.sortable tbody tr:hover{background:#FBF4E7;}
+table.sortable tbody td{color:var(--ink-soft);}
+table.sortable tbody td:last-child{color:var(--ink);font-weight:500;}
+
 /* ---------- フッター ---------- */
 footer{margin-top:54px;padding:34px 0 70px;border-top:1px solid var(--line);
   color:var(--ink-soft);font-size:.85rem;}

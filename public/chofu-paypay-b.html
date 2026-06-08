@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>調布市 PayPay商品券 B券 対象店舗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#F6821F">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">調布市 · PayPay商品券</div>
+    <h1>調布市 PayPay商品券<br><span class="orange">B券 対象店舗</span></h1>
+    <p class="sub">調布市の PayPay 商品券キャンペーンで B券が使える対象店舗の一覧</p>
+  </header>
+
+  <div class="sec-h"><span class="bar"></span>B券 対象店舗一覧</div>
+  <p class="sec-lead">列の見出しをクリックすると、<b>カテゴリ</b>・<b>店舗名</b>でそれぞれ並べ替えできます（もう一度押すと昇順／降順が切り替わります）。</p>
+
+  <div class="table-wrap">
+    <table class="sortable" id="shops">
+      <thead>
+        <tr>
+          <th data-key="category" aria-sort="none">カテゴリ</th>
+          <th data-key="name" aria-sort="none">店舗名</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>飲食店</td><td>麒麟飯店</td></tr>
+        <tr><td>飲食店</td><td>ILL FLOGS</td></tr>
+        <tr><td>クリーニング店</td><td>クリーニングオリオン</td></tr>
+        <tr><td>お菓子屋</td><td>ジェノワーズリビング</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="ic">!</span>
+    <div>掲載内容は変更される場合があります。最新の対象店舗・キャンペーン期間は <b>調布市の公式案内</b> をご確認ください。</div>
+  </div>
+
+  <footer>
+    <div class="conf">調布市 PayPay商品券キャンペーン · B券 対象店舗</div>
+  </footer>
+
+</div>
+
+<script>
+  const table = document.getElementById('shops');
+  const tbody = table.querySelector('tbody');
+  const headers = table.querySelectorAll('th[data-key]');
+  const collator = new Intl.Collator('ja');
+
+  headers.forEach((th, col) => {
+    th.addEventListener('click', () => {
+      const asc = th.getAttribute('aria-sort') !== 'ascending';
+      headers.forEach(h => h.setAttribute('aria-sort', 'none'));
+      th.setAttribute('aria-sort', asc ? 'ascending' : 'descending');
+      const rows = [...tbody.rows].sort((a, b) =>
+        collator.compare(a.cells[col].textContent, b.cells[col].textContent));
+      if (!asc) rows.reverse();
+      rows.forEach(r => tbody.appendChild(r));
+    });
+  });
+</script>
+</body>
+</html>
