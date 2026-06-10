@@ -10,13 +10,14 @@
 #
 # 例:
 #   scripts/new-doc.sh release-notes "リリースノート" "v1.0 の変更点まとめ"
-#     → release-notes.html を作成し、目次に追加します。
+#     → docs/release-notes.html を作成し、目次に追加します。
 #
 set -euo pipefail
 
-# 公開ドキュメントは public/ 配下（wrangler.jsonc の assets.directory）に置く
+# 公開ドキュメントは public/docs/ 配下（wrangler.jsonc の assets.directory は public/）に置く
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PUBLIC="$ROOT/public"
+DOCS="$PUBLIC/docs"
 INDEX="$PUBLIC/index.html"
 
 slug="${1:-}"
@@ -36,11 +37,12 @@ case "$slug" in
     exit 1;;
 esac
 
-out="$PUBLIC/$slug.html"
+out="$DOCS/$slug.html"
 if [ -e "$out" ]; then
-  echo "エラー: public/$slug.html は既に存在します。別の slug を指定してください。" >&2
+  echo "エラー: public/docs/$slug.html は既に存在します。別の slug を指定してください。" >&2
   exit 1
 fi
+mkdir -p "$DOCS"
 
 if [ ! -f "$INDEX" ]; then
   echo "エラー: public/index.html が見つかりません ($INDEX)" >&2
@@ -60,10 +62,10 @@ cat > "$out" <<EOF
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="/css/style.css">
 <link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" href="/icons/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#F6821F">
 </head>
@@ -133,7 +135,7 @@ num="$(printf '%02d' "$((count + 1))")"
 block="$(mktemp)"
 cat > "$block" <<EOF
     <li>
-      <a class="doc" href="$slug.html">
+      <a class="doc" href="docs/$slug.html">
         <span class="idx">$num</span>
         <span class="meta">
           <span class="title">$title</span>
@@ -157,7 +159,7 @@ mv "$tmp" "$INDEX"
 rm -f "$block"
 
 echo "作成しました:"
-echo "  - public/$slug.html   (雛形ドキュメント)"
-echo "  - public/index.html   (目次に #$num として追加)"
+echo "  - public/docs/$slug.html   (雛形ドキュメント)"
+echo "  - public/index.html        (目次に #$num として追加)"
 echo
-echo "ローカル確認:  npx wrangler dev   →  http://localhost:8787/$slug.html"
+echo "ローカル確認:  npx wrangler dev   →  http://localhost:8787/docs/$slug.html"

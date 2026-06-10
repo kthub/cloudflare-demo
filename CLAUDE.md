@@ -17,10 +17,11 @@ npx wrangler deploy   # deploy to Cloudflare (publishes everything in the repo r
 
 ## Architecture
 
-- `wrangler.jsonc` sets `assets.directory` to `./public`, so **only files under `public/` are published**. Everything else in the repo (`scripts/`, `README.md`, `CLAUDE.md`, `work/`, `wrangler.jsonc`) stays private. `public/index.html` resolves at `/`, `public/cloudflare-guide.html` at `/cloudflare-guide.html`, etc. Put anything that should be web-accessible under `public/`.
+- `wrangler.jsonc` sets `assets.directory` to `./public`, so **only files under `public/` are published**. Everything else in the repo (`scripts/`, `README.md`, `CLAUDE.md`, `work/`, `wrangler.jsonc`) stays private. `public/index.html` resolves at `/`, `public/docs/cloudflare-guide.html` at `/docs/cloudflare-guide.html`, etc. Put anything that should be web-accessible under `public/`.
+- Layout inside `public/`: `docs/` holds the document pages; `css/` holds the shared stylesheet; `icons/` holds all favicon/PWA images. Only `index.html`, `favicon.ico`, `site.webmanifest`, and `_redirects` stay at the root (browsers and crawlers request `/favicon.ico` directly, and a root manifest avoids PWA scope configuration). `_redirects` maps pre-2026-06 root-level document URLs to their `/docs/` locations.
 - `public/index.html` is the table of contents ("Temporary Static Documents"). Each document is one `<li><a class="doc">` entry inside `<ul class="docs">`, with a two-digit `idx` sequence number.
 - `public/css/style.css` is the **single shared stylesheet for the whole site** — every page links it. It holds the design tokens (`:root` vars), shared chrome (header/footer/`.wrap`), guide-specific components (`.steps`, `.tabs`, `pre` code blocks, `.note`), and the TOC card styles (`.docs`/`.doc`). All pages are expected to share this one look; do not add per-page CSS files.
-- Each document page is self-contained HTML linking the Google Fonts (Bricolage Grotesque / Zen Kaku Gothic New / JetBrains Mono) and `css/style.css`, with markup-only `<body>`.
+- Each document page is self-contained HTML linking the Google Fonts (Bricolage Grotesque / Zen Kaku Gothic New / JetBrains Mono) and `/css/style.css` (absolute path — pages live under `docs/`), with markup-only `<body>`.
 
 ## Adding a document
 
@@ -30,4 +31,4 @@ Use the generator rather than hand-creating files — it keeps the TOC in sync:
 scripts/new-doc.sh <slug> "<title>" ["<description>"]
 ```
 
-It creates `public/<slug>.html` from the shared template (a sample doc demonstrating the common components) and appends a correctly-numbered entry to the `<ul class="docs">` in `public/index.html` (inserted before its `</ul>`, numbering auto-derived from the existing entry count). `slug` must be `[a-zA-Z0-9_-]` and must not collide with an existing file.
+It creates `public/docs/<slug>.html` from the shared template (a sample doc demonstrating the common components) and appends a correctly-numbered entry to the `<ul class="docs">` in `public/index.html` (inserted before its `</ul>`, numbering auto-derived from the existing entry count). `slug` must be `[a-zA-Z0-9_-]` and must not collide with an existing file.
